@@ -3403,7 +3403,9 @@ impl App {
             }
         };
 
-        let runtime_keymap = match RuntimeKeymap::from_config(&keymap_config) {
+        let mut tui_config = self.local_settings.tui.clone();
+        tui_config.keymap = keymap_config.clone();
+        let runtime_keymap = match RuntimeKeymap::from_tui_config(&tui_config) {
             Ok(runtime_keymap) => runtime_keymap,
             Err(err) => {
                 let params = crate::keymap_setup::build_keymap_conflict_params(
@@ -3468,7 +3470,9 @@ impl App {
             }
         };
 
-        let runtime_keymap = match RuntimeKeymap::from_config(&keymap_config) {
+        let mut tui_config = self.local_settings.tui.clone();
+        tui_config.keymap = keymap_config.clone();
+        let runtime_keymap = match RuntimeKeymap::from_tui_config(&tui_config) {
             Ok(runtime_keymap) => runtime_keymap,
             Err(err) => {
                 self.app_event_tx.send(AppEvent::FollowTranscript);

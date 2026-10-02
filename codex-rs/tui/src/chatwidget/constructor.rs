@@ -74,7 +74,7 @@ impl ChatWidget {
             &header_model,
             &model_catalog.try_list_models().unwrap_or_default(),
         );
-        let runtime_keymap = RuntimeKeymap::from_config(&local_settings.tui.keymap).ok();
+        let runtime_keymap = RuntimeKeymap::from_tui_config(&local_settings.tui).ok();
         let default_keymap = RuntimeKeymap::defaults();
         let copy_last_response_binding = runtime_keymap
             .as_ref()

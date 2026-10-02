@@ -819,9 +819,9 @@ impl App {
         }
         let file_search = FileSearchManager::new(config.cwd.to_path_buf(), app_event_tx.clone());
         let runtime_keymap =
-            RuntimeKeymap::from_config(&local_settings.tui.keymap).map_err(|err| {
+            RuntimeKeymap::from_tui_config(&local_settings.tui).map_err(|err| {
                 color_eyre::eyre::eyre!(
-                    "Invalid `tui.keymap` configuration: {err}\n\
+                    "Invalid TUI shortcut configuration: {err}\n\
 Fix the config and retry.\n\
 See the Codex keymap documentation for supported actions and examples."
                 )

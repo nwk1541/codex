@@ -391,7 +391,7 @@ impl App {
             return;
         }
         let local_settings = self.local_settings.reloaded(&config);
-        let keymap = match RuntimeKeymap::from_config(&local_settings.tui.keymap) {
+        let keymap = match RuntimeKeymap::from_tui_config(&local_settings.tui) {
             Ok(keymap) => keymap,
             Err(error) => return self.chat_widget.add_error_message(error),
         };

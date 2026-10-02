@@ -27,7 +27,7 @@ impl ChatWidget {
     /// overrides. If the config is invalid, the user sees the parse error instead of a partial
     /// picker that could commit edits against stale runtime state.
     pub(crate) fn open_keymap_picker(&mut self) {
-        match RuntimeKeymap::from_config(&self.local_settings.tui.keymap) {
+        match RuntimeKeymap::from_tui_config(&self.local_settings.tui) {
             Ok(runtime_keymap) => {
                 let params = keymap_setup::build_keymap_picker_params_with_filter(
                     &runtime_keymap,

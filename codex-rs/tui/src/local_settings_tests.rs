@@ -8,6 +8,48 @@ use codex_terminal_detection::Multiplexer;
 use pretty_assertions::assert_eq;
 
 #[tokio::test]
+async fn model_presets_survive_bootstrap_legacy_loading_and_reload() -> anyhow::Result<()> {
+    let home = tempfile::tempdir()?;
+    std::fs::write(
+        home.path().join("config.toml"),
+        "[tui.model_presets.sol]\nmodel = 'gpt-6.1-sol'\nreasoning_effort = 'xhigh'\nkey = 'ctrl-1'\n",
+    )?;
+    let overrides = LoaderOverrides {
+        ignore_project_config: true,
+        ..LoaderOverrides::without_managed_config_for_tests()
+    };
+    let config = ConfigBuilder::default()
+        .codex_home(home.path().to_path_buf())
+        .strict_config(true)
+        .loader_overrides(overrides.clone())
+        .build()
+        .await?;
+    let bootstrap = crate::legacy_core::config::load_config_toml_with_layer_stack(
+        home.path(),
+        None,
+        Vec::new(),
+        codex_config::ConfigLoadOptions {
+            loader_overrides: overrides,
+            strict_config: true,
+            ..Default::default()
+        },
+    )
+    .await?;
+    let local = LocalSettings::from_bootstrap(&bootstrap, config.codex_home.clone())?;
+    assert_eq!(local.tui.model_presets, config.tui_model_presets);
+    assert_eq!(
+        LocalSettings::from(&config).tui.model_presets,
+        local.tui.model_presets
+    );
+    assert_eq!(
+        local.reloaded(&config).tui.model_presets,
+        local.tui.model_presets
+    );
+    assert_eq!(local.tui.model_presets["sol"].model, "gpt-6.1-sol");
+    Ok(())
+}
+
+#[tokio::test]
 async fn launch_screen_mode_survives_configuration_reload() -> anyhow::Result<()> {
     use crate::transcript_mode::TranscriptMode;
     use codex_config::types::AltScreenMode;

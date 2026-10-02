@@ -4686,6 +4686,13 @@
           "default": {},
           "description": "Startup tooltip availability NUX state persisted by the TUI."
         },
+        "model_presets": {
+          "additionalProperties": {
+            "$ref": "#/definitions/TuiModelPreset"
+          },
+          "description": "Named model and reasoning shortcuts. Selecting one never saves model defaults.",
+          "type": "object"
+        },
         "notification_condition": {
           "allOf": [
             {
@@ -5787,6 +5794,28 @@
           "description": "Move list selection up by one page."
         }
       },
+      "type": "object"
+    },
+    "TuiModelPreset": {
+      "additionalProperties": false,
+      "description": "A model and reasoning effort selected for the active session by a TUI shortcut.",
+      "properties": {
+        "key": {
+          "description": "One key event, using the same notation as `tui.keymap` (for example `ctrl-1`).",
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "reasoning_effort": {
+          "$ref": "#/definitions/ReasoningEffort"
+        }
+      },
+      "required": [
+        "key",
+        "model",
+        "reasoning_effort"
+      ],
       "type": "object"
     },
     "TuiPagerKeymap": {

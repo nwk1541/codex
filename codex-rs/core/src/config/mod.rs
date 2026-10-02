@@ -54,6 +54,7 @@ use codex_config::types::ToolSuggestConfig;
 use codex_config::types::ToolSuggestDisabledTool;
 use codex_config::types::ToolSuggestDiscoverable;
 use codex_config::types::TuiKeymap;
+use codex_config::types::TuiModelPreset;
 use codex_config::types::TuiNotificationSettings;
 use codex_config::types::TuiPetAnchor;
 use codex_config::types::UriBasedFileOpener;
@@ -860,6 +861,9 @@ pub struct Config {
     /// 2. `tui.keymap.global`
     /// 3. built-in defaults
     pub tui_keymap: TuiKeymap,
+
+    /// Model and reasoning shortcuts owned by the local TUI.
+    pub tui_model_presets: BTreeMap<String, TuiModelPreset>,
 
     /// The absolute directory that should be treated as the current working
     /// directory for the session. All relative paths inside the business-logic
@@ -4573,6 +4577,11 @@ impl Config {
                 .tui
                 .as_ref()
                 .map(|t| t.keymap.clone())
+                .unwrap_or_default(),
+            tui_model_presets: cfg
+                .tui
+                .as_ref()
+                .map(|t| t.model_presets.clone())
                 .unwrap_or_default(),
             otel,
         };

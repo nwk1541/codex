@@ -798,10 +798,25 @@ pub struct ModelAvailabilityNuxConfig {
 /// Fallback resize-reflow row cap when Codex cannot identify a terminal-specific scrollback size.
 pub const DEFAULT_TERMINAL_RESIZE_REFLOW_FALLBACK_MAX_ROWS: usize = 1_000;
 
+/// A model and reasoning effort selected for the active session by a TUI shortcut.
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, JsonSchema)]
+#[serde(deny_unknown_fields)]
+#[schemars(deny_unknown_fields)]
+pub struct TuiModelPreset {
+    pub model: String,
+    pub reasoning_effort: codex_protocol::openai_models::ReasoningEffort,
+    /// One key event, using the same notation as `tui.keymap` (for example `ctrl-1`).
+    pub key: KeybindingSpec,
+}
+
 /// Collection of settings that are specific to the TUI.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default, JsonSchema)]
 #[schemars(deny_unknown_fields)]
 pub struct Tui {
+    /// Named model and reasoning shortcuts. Selecting one never saves model defaults.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub model_presets: BTreeMap<String, TuiModelPreset>,
+
     #[serde(default, flatten)]
     pub notification_settings: TuiNotificationSettings,
 
@@ -1115,3 +1130,7 @@ pub struct SandboxWorkspaceWrite {
 #[cfg(test)]
 #[path = "types_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "tui_model_presets_tests.rs"]
+mod model_presets_tests;

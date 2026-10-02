@@ -34,7 +34,9 @@ use std::sync::Arc;
 
 mod bindings;
 mod chords;
+mod model_presets;
 mod vim_search;
+pub(crate) use model_presets::ResolvedModelPreset;
 pub(crate) use vim_search::VimSearchKeymap;
 
 #[cfg(test)]
@@ -127,6 +129,8 @@ pub(crate) struct AppKeymap {
 /// handler code, not here.
 #[derive(Clone, Debug)]
 pub(crate) struct ChatKeymap {
+    /// Session-only model and reasoning shortcuts on the main chat surface.
+    pub(crate) model_presets: Vec<ResolvedModelPreset>,
     /// Start or stop a voice conversation.
     pub(crate) toggle_voice: Vec<KeyBinding>,
     /// Toggle capture in the active voice session.
@@ -753,6 +757,7 @@ impl RuntimeKeymap {
                 }));
 
         let mut chat = ChatKeymap {
+            model_presets: Vec::new(),
             toggle_voice: if voice_toggle_default_is_shadowed {
                 Vec::new()
             } else {
@@ -1656,6 +1661,7 @@ impl RuntimeKeymap {
             },
             chords: Arc::default(),
             chat: ChatKeymap {
+                model_presets: Vec::new(),
                 toggle_voice: default_bindings![plain(KeyCode::F(8))],
                 toggle_voice_mute: default_bindings![ctrl(KeyCode::Char('x'))],
                 chord_hints: Arc::default(),
